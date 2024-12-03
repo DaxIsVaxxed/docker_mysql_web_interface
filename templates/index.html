@@ -1,0 +1,64 @@
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+    <title>Docker MySQL Web Interface</title>
+    <link rel="stylesheet" href="{{ url_for('static', filename='styles.css') }}">
+  </head>
+  <body>
+    <div class="container">
+      <div class="controls">
+        <h1>Docker MySQL Web Interface</h1>
+        <h2>Add Data to Active Container</h2>
+        <form action="/add_data" method="post">
+          <label for="name">Name:</label>
+          <input type="text" id="name" name="name" required><br>
+          <label for="value">Value:</label>
+          <input type="text" id="value" name="value" required><br>
+          <button type="submit">Add Data</button>
+        </form>
+
+        <h2>Manage Active Container</h2>
+        <form action="/stop_container" method="post">
+          <button type="submit">Stop Active Container</button>
+        </form>
+
+        <h2>Delete Data from Database</h2>
+        <form action="/delete_data" method="post">
+          <button type="submit" class="delete-button">Delete All Data</button>
+        </form>
+      </div>
+
+      <div class="container-boxes">
+        {% for container_name, container_info in containers.items() %}
+        <div class="container-box {{ container_info.status }}">
+          <h2>{{ container_name }} - Status: {{ container_info.status }}</h2>
+          <h3>Container ID: {{ container_info.id }}</h3>
+
+          <h3>Database Data for {{ container_name }}</h3>
+          {% if container_info.status == 'running' %}
+          <table border="1">
+            <tr>
+              <th>ID</th>
+              <th>Name</th>
+              <th>Value</th>
+            </tr>
+            {% for row in data[container_name] %}
+            <tr>
+              <td>{{ row[0] }}</td>
+              <td>{{ row[1] }}</td>
+              <td>{{ row[2] }}</td>
+            </tr>
+            {% endfor %}
+          </table>
+          {% else %}
+          <p>Database data is unavailable as the container is not running.</p>
+          {% endif %}
+        </div>
+        {% endfor %}
+      </div>
+    </div>
+  </body>
+</html>
+
